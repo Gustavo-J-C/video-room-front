@@ -8,7 +8,7 @@ import SearchBar from './components/SearchBar'
 import Chat from './components/Chat'
 import VideoDetail from './components/VideoDetail'
 
-const socket = io.connect("http://localhost:3001")
+const socket = io.connect("https://video-room-app-back.herokuapp.com")
 
 function App() {
 

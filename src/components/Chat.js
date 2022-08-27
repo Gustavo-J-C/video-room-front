@@ -10,7 +10,7 @@ export default function Chat({socket, userName, room}) {
 
     
     const sendMessage = async () => {
-        if (message != "") {
+        if (message !== "") {
             const messageData = {
                 room,
                 user: userName,
@@ -66,7 +66,7 @@ export default function Chat({socket, userName, room}) {
             <button onClick={() => setLink(getEmbedLink)}>ok</button>
         </div>
         <div>
-            {link != "" ? <iframe frameBorder="0" height="400px" width="100%" title="video Player" src={link}/> : null }
+            {link !== "" ? <iframe frameBorder="0" height="400px" width="100%" title="video Player" src={link}/> : null }
         </div>
         <div className="chat-window">
             
