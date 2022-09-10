@@ -64,22 +64,6 @@ function App() {
 
   return (
     <div className="app">
-      {/* <Grid justify="center" container spacing={10}>
-        <Grid item xs={12}>
-          <Grid container spacing={10}> 
-            <Grid item xs={12}>
-              <SearchBar SearchVideos={SearchVideos}/>
-            </Grid>
-            <Grid item xs={8}>
-              {showVideo && <VideoDetail video={videos[0]}/>}
-              <Button onClick={() => setShowVideo(true)}>Mostrar Video</Button>
-            </Grid>
-            <Grid item xs={4}>
-              {video list} 
-            </Grid>
-          </Grid>
-        </Grid>
-      </Grid> */}
           {!showChat ? ( 
             <div className="joinChatContainer">
               <h4>selecione a sala que deseja entrar</h4>
