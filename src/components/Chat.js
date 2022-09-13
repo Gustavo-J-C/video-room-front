@@ -1,13 +1,14 @@
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useRef} from 'react'
 import '../App.css'
 
-export default function Chat({socket, userName, room}) {
+export default function Chat({socket, userName, room, setShowChat}) {
 
     const id = socket.id
     const [message, setMessage] = useState("");
     const [messageList, setMessageList] = useState([]);
     const [input, setInput] = useState("");
     const [link, setLink] = useState("");
+    const messagesEndRef = useRef(null)
 
     
     const sendMessage = async () => {
@@ -25,6 +26,7 @@ export default function Chat({socket, userName, room}) {
             await socket.emit("send_message", messageData)
             setMessageList([...messageList, messageData])
             setMessage("")
+            scrollToBottom()
         }
     }
 
@@ -39,30 +41,39 @@ export default function Chat({socket, userName, room}) {
         return newLink
     }
 
+    const leaveRoom = async () => {
+       await socket.emit("leave-room", room)  
+    }
+
+    const scrollToBottom = () => {
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth", block: "start" })
+    }
+
     useEffect(() => {
         socket.on('recieve_message', (data) => {
-            console.log(data);
             setMessageList((list) => [...list, data])
-            console.log("recieving data:");
+            scrollToBottom()
         })
-        
         socket.on('recieve_video', (data) => {
             setLink(data)
-            console.log("recieving video");
         })
         return () => {socket.off('recieve_message');
             socket.off('recieve_video')}
       }, [socket])
 
     return (
+        <>
+        <div className="input-area">
+            <input 
+            className="link-input"
+            placeholder="digite o link do video do youtube"
+            type="text"
+            onChange={(e) => setInput(e.target.value)}/>
+            <button className="link-button" onClick={() => setLink(getEmbedLink)}>pesquisar</button>
+            <button className="button-exit"
+                onClick={() => {setShowChat(false); leaveRoom(room)}}>SAIR DA SALA</button>
+        </div>
         <div id="chat-room">
-            <div className="input-area">
-                <input 
-                placeholder="digite o link do video do youtube"
-                type="text"
-                onChange={(e) => setInput(e.target.value)}/>
-                <button onClick={() => setLink(getEmbedLink)}>ok</button>
-            </div>
             <div className="video-window">
                 {link !== "" ? <iframe 
                     allowFullScreen="allowFullScreen"
@@ -80,7 +91,10 @@ export default function Chat({socket, userName, room}) {
                     {messageList.map((element) => {
                         console.log(element);
                         return (
-                            <div id={element.id == id ? 'you' : 'other'} className="message">
+                            <div id={element.id === id ? 'you' : 'other'} className="message">
+                                <div className="message-user">
+                                    <p>{element.user}</p>
+                                </div>
                                 <div className="message-content">
                                     <p>{element.text}</p>
                                 </div>
@@ -90,6 +104,7 @@ export default function Chat({socket, userName, room}) {
                             </div> 
                         )
                     })}
+                    <div style={{height: '20px'}} ref={messagesEndRef}></div>
                 </div>
                 <div className="chat-footer">
                     <input value={message} 
@@ -101,6 +116,7 @@ export default function Chat({socket, userName, room}) {
                 </div>
             </div>
         </div>
+        </>
     )
 
 }

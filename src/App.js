@@ -2,49 +2,25 @@ import React, {useState, useEffect} from 'react'
 import './App.css'
 import io from 'socket.io-client'
 import axios from 'axios'
-import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
-import SearchBar from './components/SearchBar'
 import Chat from './components/Chat'
-import VideoDetail from './components/VideoDetail'
 
-const socket = io.connect("https://video-room-app-back.herokuapp.com")
+const socket = io.connect("http://localhost:80")
+// https://video-room-app-back.herokuapp.com
 
 function App() {
 
-  const [videos, setVideos] = useState([])
-  const [showVideo, setShowVideo] = useState(false);
-  const [input, setInput] = useState('')
   const [rooms, setRooms] = useState([])
   const [newRoom, setNewRoom] = useState([])
   const [room, setRoom] = useState("")
   const [showChat, setShowChat] = useState(false)
   const [userName, setUserName] = useState("")
 
-  async function SearchVideos(params) {
-    await axios({
-      "method": "GET",
-      "url": 'https://www.googleapis.com/youtube/v3/search',
-      "params":{
-          'part':'snippet',
-          'maxResults':'20',
-          'key':'AIzaSyBD5VkWjcl0UElIV_nAh0h_NF433S1tAi4',
-          'q': {input},
-          'videoEmbeddable': 'true',
-      }
-    })
-    .then((res) => {
-      setVideos(res.data.items)
-    })
-    .catch((error) => {
-    })
-  }
   
   useEffect(() => {
     socket.on('request_rooms', (data) => {
       setRooms(data)
     })
-  }, [socket])
+  }, [])
   
 
   const enterRoom = (selectRoom) => {
@@ -57,7 +33,7 @@ function App() {
 
   const createRoom = () => {
     if (newRoom !== "") {
-      socket.emit("create_room", newRoom)
+      console.log(socket.emit("create_room", newRoom));
       enterRoom(newRoom)
     }
   }
@@ -86,7 +62,7 @@ function App() {
                 })}
               </div>
             </div>
-          ) : <Chat socket={socket} room={room} userName={userName}/>
+          ) : <Chat socket={socket} room={room} userName={userName} setShowChat={setShowChat}/>
           }
     </div>
   );
