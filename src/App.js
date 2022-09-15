@@ -4,8 +4,8 @@ import io from 'socket.io-client'
 import axios from 'axios'
 import Chat from './components/Chat'
 
-const socket = io.connect("http://localhost:80")
-// https://video-room-app-back.herokuapp.com
+const socket = io.connect("https://video-room-app-back.herokuapp.com")
+// http://localhost:80
 
 function App() {
 
